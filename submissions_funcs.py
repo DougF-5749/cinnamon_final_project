@@ -26,17 +26,15 @@ def init_db_state(db_names: list[str], db_state: dict = {}) -> dict[str, dict]:
         cur.execute(
             """
             SELECT
-                COALESCE(MAX(id), 0) AS last_max_id,
                 COUNT(*) AS baseline_count
             FROM responses;
             """
         )
-        last_max_id, baseline_count = cur.fetchone()
+        baseline_count = cur.fetchone()[0]
         cur.close()
 
         db_state[db_name] = {
             "conn": conn,
-            "last_max_id": last_max_id,
             "total_rows": baseline_count,
         }
     return db_state
@@ -46,26 +44,21 @@ def submission_count(db_state: dict[str, dict]) -> dict:
 
     for state in db_state.values():
             conn = state['conn']
-            last_max = state['last_max_id'] 
 
             cursor = conn.cursor() 
             cursor.execute(
                 """
                 SELECT
-                    COUNT(*) AS new_rows,
-                    COALESCE(MAX(id), %s) AS new_max_id
+                    COUNT(*) AS updated_row_count
                 FROM responses
-                WHERE id > %s;
-                """, (last_max, last_max),
+                """
             )
 
-            new_rows, new_max_id = cursor.fetchone()
+            updated_row_count= cursor.fetchone()[0]
             cursor.close()
 
-            if new_rows > 0:
-                state['last_max_id'] = new_max_id
-                state['total_rows'] += new_rows
-                new_responses += new_rows
+            if updated_row_count > state['total_rows']:
+                state['total_rows'] += updated_row_count
 
     total_responses = sum(state['total_rows'] for state in db_state.values())
 
