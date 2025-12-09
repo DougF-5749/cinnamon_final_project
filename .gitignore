@@ -1,0 +1,26 @@
+__pycache__/
+docker-compose.yaml
+
+# --- Virtual environments ---
+cinnamon_venv/
+venv/
+.env/
+.venv/
+ENV/
+env/
+
+# --- Environment / secrets ---
+*.env
+.env.*
+credentials.conf
+
+# --- Test / coverage ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+
+# --- macOS / OS cruft ---
+.DS_Store
+Thumbs.db
