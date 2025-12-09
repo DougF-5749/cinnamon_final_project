@@ -40,8 +40,6 @@ def init_db_state(db_names: list[str], db_state: dict = {}) -> dict[str, dict]:
     return db_state
 
 def submission_count(db_state: dict[str, dict]) -> dict:
-    new_responses = 0
-
     for state in db_state.values():
             conn = state['conn']
 
