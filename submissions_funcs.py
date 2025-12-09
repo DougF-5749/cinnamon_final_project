@@ -22,20 +22,20 @@ def init_db_state(db_names: list[str], db_state: dict = {}) -> dict[str, dict]:
         )
         conn.autocommit = True
 
-        cur = conn.cursor()
-        cur.execute(
-            """
-            SELECT
-                COUNT(*) AS baseline_count
-            FROM responses;
-            """
-        )
-        baseline_count = cur.fetchone()[0]
-        cur.close()
+        # cur = conn.cursor()
+        # cur.execute(
+        #     """
+        #     SELECT
+        #         COUNT(*) AS baseline_count
+        #     FROM responses;
+        #     """
+        # )
+        # baseline_count = cur.fetchone()[0]
+        # cur.close()
 
         db_state[db_name] = {
             "conn": conn,
-            "total_rows": baseline_count,
+            "total_rows": 0,  #baseline_count,
         }
     return db_state
 
@@ -47,16 +47,16 @@ def submission_count(db_state: dict[str, dict]) -> dict:
             cursor.execute(
                 """
                 SELECT
-                    COUNT(*) AS updated_row_count
+                    COUNT(*) AS row_count
                 FROM responses
                 """
             )
 
-            updated_row_count= cursor.fetchone()[0]
+            row_count = cursor.fetchone()[0]
             cursor.close()
 
-            if updated_row_count > state['total_rows']:
-                state['total_rows'] += updated_row_count
+            if row_count > state['total_rows']:
+                state['total_rows'] += row_count
 
     total_responses = sum(state['total_rows'] for state in db_state.values())
 
