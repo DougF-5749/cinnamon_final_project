@@ -19,15 +19,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# chage this to connect to ADB
 db_state = init_db_state(db_names)
 
 print("Initial database states:")
 for name, state in db_state.items():
     print(f"📊 {name}: baseline_rows={state['total_rows']}")
 
+# change this to query ADB
 @app.get("/submissions")
 async def submissions():
     return submission_count(db_state)
+
+# Create 4 more ednpoints here for the other metrics
 
 if __name__ == "__main__":
     uvicorn.run(app, port=8080)
