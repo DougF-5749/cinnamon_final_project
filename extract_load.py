@@ -54,7 +54,7 @@ try:
     )
     adb_conn.autocommit = True
 
-    print(f"Database connections completed in {time.time() - start_time:.2f} seconds.")   
+    print(f"    🔵 Database connections established in {time.time() - start_time:.2f} seconds.")   
 
     while True:
         print("🟣 Polling source databases for new submissions...")
@@ -91,7 +91,7 @@ try:
                 modified[5] = str(modified[5]) if modified[5] is not None else None  # country
                                     
                 new_submissions_list.append(modified)
-        print(f"Extraction and validation completed in {time.time() - extraction_start_time:.2f} seconds.")
+        print(f"    🔵 Extraction and validation completed in {time.time() - extraction_start_time:.2f} seconds.")
         # insert new submissions into analytical_db
         print(f"🟣 Inserting {len(new_submissions_list)} new submissions into analytical_db...")
         insertion_start_time = time.time()
@@ -124,8 +124,8 @@ try:
             )
             cur.close()
         new_submissions_list.clear()
-        print(f"Insertion completed in {time.time() - insertion_start_time:.2f} seconds.")
-        print(f"🟢 Polling cycle completed in {time.time() - start_time:.2f} seconds.")
+        print(f"    🔵 Insertion completed in {time.time() - insertion_start_time:.2f} seconds.")
+        print(f"🟢 Polling cycle completed in {time.time() - start_time:.2f} seconds.\n")
         time.sleep(POLLING_TIME)
         start_time = time.time()
 
