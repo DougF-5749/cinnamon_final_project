@@ -127,6 +127,7 @@ try:
         print(f"Insertion completed in {time.time() - insertion_start_time:.2f} seconds.")
         print(f"🟢 Polling cycle completed in {time.time() - start_time:.2f} seconds.")
         time.sleep(POLLING_TIME)
+        start_time = time.time()
 
 except KeyboardInterrupt:
     print("🟣 User interrupted the process.")
