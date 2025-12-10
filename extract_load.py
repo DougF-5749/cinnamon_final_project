@@ -112,12 +112,7 @@ try:
                 VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT (initial_id) DO NOTHING;
                 """,
-                submission[0],  # initial_id
-                submission[1],  # belonging
-                submission[2],  # ec_yrs
-                submission[3],  # total_learning_mins
-                submission[4],  # esc_score
-                submission[5],  # country
+                submission  # country
             )
             cur.close()
         new_submissions_list.clear()
