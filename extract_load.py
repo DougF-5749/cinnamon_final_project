@@ -59,7 +59,7 @@ try:
             cur.execute(
                 """
                 SELECT
-                    id AS submission_id,
+                    id AS initial_id,
                     belong,
                     durecec,
                     tmins,
@@ -95,18 +95,18 @@ try:
                     id SERIAL PRIMARY KEY,
                     initial_id INTEGER,
                     belonging FLOAT,
-                    ec_yrs INTEGER,
-                    total_learning_mins INTEGER,
-                    esc_score FLOAT,
+                    early_ed_years INTEGER,
+                    total_learning INTEGER,
+                    econ_soc_cul_status FLOAT,
                     country VARCHAR(3),
-                    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    datetime_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
                 INSERT INTO analytical_responses (
                     initial_id,
                     belonging,
-                    ec_yrs,
-                    total_learning_mins,
-                    esc_score,
+                    early_ed_years,
+                    total_learning,
+                    econ_soc_cul_status,
                     country
                 )
                 VALUES (%s, %s, %s, %s, %s, %s)
