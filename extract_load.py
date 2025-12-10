@@ -24,7 +24,7 @@ source_db_state = {} # to hold source db connections
 
 new_submissions_list = [] # to hold new submissions before inserting into analytical_db
 
-POLLING_TIME = 30 # seconds
+POLLING_TIME = 2 # seconds
 
 try:
     print("🟣 Starting database connections")
