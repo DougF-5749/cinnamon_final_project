@@ -1,4 +1,4 @@
-from time import time, sleep
+import time
 import psycopg2
 import configparser
 from db_names import db_names
