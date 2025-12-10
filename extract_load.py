@@ -75,7 +75,7 @@ try:
             for row in new_submissions:
                 modified = list(row)
                 for element in modified:
-                    if element is 'NA':
+                    if element == 'NA':
                         element = None
                 modified[0] = int(modified[0])  # initial_id
                 modified[1] = float(modified[1]) if modified[1] is not None else None  # belonging
