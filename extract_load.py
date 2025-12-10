@@ -110,7 +110,7 @@ try:
                     country
                 )
                 VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT (initial_id) DO NOTHING;
+                --ON CONFLICT (initial_id) DO NOTHING;
                 """,
                 submission  # country
             )
