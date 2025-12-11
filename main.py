@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.pool import SimpleConnectionPool
 import uvicorn
 from belonging import belonging_scores
+from subs_over_time import subs_over_time_count
 from escs import esc_scores
 from submissions_funcs import submission_count
 from avg_total_learning import avg_learning_hours
@@ -64,9 +65,9 @@ adb_state = {
 async def submissions(conn = Depends(get_adb_conn)):
     return submission_count(conn, adb_state)
 
-# @app.get("/endpoint-2")
-# async def endpoint_2():
-#     return endpoint_2_func(adb_conn_pool.getconn())
+@app.get("/subs_over_time")
+async def subs_over_time(conn = Depends(get_adb_conn)):
+    return subs_over_time_count(conn)
 
 @app.get("/avg_learning")
 async def avg_learning(conn = Depends(get_adb_conn)):
