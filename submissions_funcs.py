@@ -1,65 +1,25 @@
-import psycopg2
-import configparser
+def submission_count(connection, db_state: dict) -> dict:
+    last_max_id = db_state['last_max_id']
 
-# read credentials for aws rds
-parser = configparser.ConfigParser()
-parser.read('credentials.conf')
-username = parser.get('source_aws_rds_credentials', 'username')
-password = parser.get('source_aws_rds_credentials', 'password')
-host_start = parser.get('source_aws_rds_credentials', 'host_start')
-host_last = parser.get('source_aws_rds_credentials', 'host_last')
-port = parser.get('source_aws_rds_credentials', 'port')
+    cursor = connection.cursor() 
 
-def init_db_state(db_names: list[str], db_state: dict = {}) -> dict[str, dict]:
-    for db_name in db_names:
-        host = f"{host_start}{db_name}{host_last}"
-        conn = psycopg2.connect(
-            dbname=db_name,
-            user=username,
-            password=password,
-            host=host,
-            port=port,
-        )
-        conn.autocommit = True
+    cursor.execute(
+        """
+        SELECT
+            COUNT(*),
+            MAX(id)
+        FROM responses
+        WHERE id > %s
+        """, last_max_id
+    )    
+    
+    row_count, max_id = cursor.fetchone()
 
-        # cur = conn.cursor()
-        # cur.execute(
-        #     """
-        #     SELECT
-        #         COUNT(*) AS baseline_count
-        #     FROM responses;
-        #     """
-        # )
-        # baseline_count = cur.fetchone()[0]
-        # cur.close()
+    cursor.close()    
+    
+    db_state['total_submissions'] += row_count
+    db_state['last_max_id'] = max_id
 
-        db_state[db_name] = {
-            "conn": conn,
-            "total_rows": 0,  #baseline_count,
-        }
-    return db_state
-
-def submission_count(db_state: dict[str, dict]) -> dict:
-    for state in db_state.values():
-            conn = state['conn']
-
-            cursor = conn.cursor() 
-            cursor.execute(
-                """
-                SELECT
-                    COUNT(*) AS row_count
-                FROM responses
-                """
-            )
-
-            row_count = cursor.fetchone()[0]
-            cursor.close()
-
-            if row_count > state['total_rows']:
-                state['total_rows'] += row_count
-
-    total_responses = sum(state['total_rows'] for state in db_state.values())
-
-    return {"count": total_responses}
+    return {"count": db_state['total_submissions']}
 
 

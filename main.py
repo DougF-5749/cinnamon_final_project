@@ -51,10 +51,15 @@ adb_conn_pool = SimpleConnectionPool(
 
 print("   🔵 Analytical database connection pool established.")
 
+adb_state = {
+    'last_max_id': 0,
+    'total_submissions': 0
+}
+
 # change this to query ADB
 @app.get("/submissions")
 async def submissions(conn = Depends(get_adb_conn)):
-    return submission_count(conn)
+    return submission_count(conn, adb_state)
 
 # @app.get("/endpoint-2")
 # async def endpoint_2():
