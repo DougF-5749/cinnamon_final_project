@@ -1,10 +1,20 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-import psycopg2
+from psycopg2.pool import SimpleConnectionPool
 import uvicorn
-from submissions_funcs import init_db_state, submission_count
+from submissions_funcs import submission_count
 from db_names import db_names
 import configparser
+
+# function to abstract away getting a connection from the pool
+def get_adb_conn():
+    conn = adb_conn_pool.getconn()
+    conn.autocommit = True
+    try:
+        yield conn
+    finally:
+        adb_conn_pool.putconn(conn)
+# -----------------------------------------------------------
 
 parser = configparser.ConfigParser()
 parser.read('credentials.conf')
@@ -28,22 +38,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print("🟣 Starting analytical database connection")
-adb_conn = psycopg2.connect(
+print("🟣 Creating analytical database connection pool")
+adb_conn_pool = SimpleConnectionPool(
+    minconn=5,
+    maxconn=10,
     dbname=adb_dbname,
     user=adb_username,
     password=adb_password,
     host=adb_host,
-    port=adb_port,
+    port=adb_port
 )
 
-adb_conn.autocommit = True
-print("   🔵 Analytical database connection established.")
+print("   🔵 Analytical database connection pool established.")
 
 # change this to query ADB
 @app.get("/submissions")
-async def submissions():
-    return submission_count(db_state)
+async def submissions(conn = Depends(get_adb_conn)):
+    return submission_count(conn)
+
+# @app.get("/endpoint-2")
+# async def endpoint_2():
+#     return endpoint_2_func(adb_conn_pool.getconn())
+
+# @app.get("/endpoint-3")
+# async def endpoint_3():
+#     return endpoint_3_func(adb_conn_pool.getconn())
+
+# @app.get("/endpoint-4")
+# async def endpoint_4():
+#     return endpoint_4_func(adb_conn_pool.getconn())
+
+# @app.get("/endpoint-5")
+# async def endpoint_5():
+#     return endpoint_5_func(adb_conn_pool.getconn())
 
 # Create 4 more ednpoints here for the other metrics
 
