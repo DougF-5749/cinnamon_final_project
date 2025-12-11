@@ -110,7 +110,7 @@ if __name__ == "__main__":
         id='update_time_series'
     )
     # Run once immediately
-    submission_time_series(conn = Depends(get_adb_conn), id_tracker=id_tracker, time_series_tracker=time_series_data)
+    submission_time_series(conn = Depends(get_adb_conn), last_maxid=id_tracker, time_series_tracker=time_series_data)
     scheduler.start()
     print("Scheduler started. Background task is running.")
     
