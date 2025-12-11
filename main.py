@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.pool import SimpleConnectionPool
 import uvicorn
+from escs import esc_scores
 from submissions_funcs import submission_count
 from avg_total_learning import avg_learning_hours
 from db_names import db_names
@@ -70,9 +71,9 @@ async def submissions(conn = Depends(get_adb_conn)):
 async def avg_learning(conn = Depends(get_adb_conn)):
     return avg_learning_hours(conn)
 
-# @app.get("/endpoint-4")
-# async def endpoint_4():
-#     return endpoint_4_func(adb_conn_pool.getconn())
+@app.get("/avg_escs")
+async def avg_escs(conn = Depends(get_adb_conn)):
+    return esc_scores(conn)
 
 # @app.get("/endpoint-5")
 # async def endpoint_5():
