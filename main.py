@@ -27,6 +27,8 @@ id_tracker = {
 }
 time_series_data = {"datasets": [{"id": "Submissions",
       "data": []}]}
+
+MAX_TIME_SERIES_LENGTH = 12
 # -----------------------------------------------------------
 
 parser = configparser.ConfigParser()
@@ -112,7 +114,7 @@ if __name__ == "__main__":
         conn = adb_conn_pool.getconn()  # Get actual connection from pool
         conn.autocommit = True
         try:
-            submission_time_series(conn=conn, last_maxid=id_tracker, time_series_tracker=time_series_data)
+            submission_time_series(conn=conn, last_maxid=id_tracker, time_series_tracker=time_series_data, time_series_length=MAX_TIME_SERIES_LENGTH)
         finally:
             adb_conn_pool.putconn(conn)  # Return connection to pool
     
