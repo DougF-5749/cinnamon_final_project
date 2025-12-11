@@ -122,7 +122,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=run_time_series_update,  # Use the wrapper function
         trigger='interval',
-        seconds=TIME_SERIES_INTERVAL_MINUTES,
+        minutes=TIME_SERIES_INTERVAL_MINUTES,
         id='update_time_series'
     )
     
