@@ -18,7 +18,11 @@ def submission_count(connection, db_state: dict) -> dict:
     cursor.close()    
     
     db_state['total_submissions'] += row_count
-    db_state['last_max_id'] = max_id
+
+    if max_id is not None:
+        db_state['last_max_id'] = max_id
+    # else:  
+    #     db_state['last_max_id'] = last_max_id
 
     return {"count": db_state['total_submissions']}
 
