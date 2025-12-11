@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.pool import SimpleConnectionPool
 import uvicorn
 from submissions_funcs import submission_count
+from avg_total_learning import avg_learning_hours
 from db_names import db_names
 import configparser
 
@@ -67,7 +68,7 @@ async def submissions(conn = Depends(get_adb_conn)):
 
 @app.get("/avg_learning")
 async def avg_learning(conn = Depends(get_adb_conn)):
-    return avg_learning(conn)
+    return avg_learning_hours(conn)
 
 # @app.get("/endpoint-4")
 # async def endpoint_4():

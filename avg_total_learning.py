@@ -1,4 +1,4 @@
-def avg_learning(conn):
+def avg_learning_hours(conn):
     cursor = conn.cursor()
     cursor.execute(
         """
