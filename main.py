@@ -97,6 +97,12 @@ async def timeseries_data_submissions():
 # Create 4 more ednpoints here for the other metrics
 
 if __name__ == "__main__":
+    conn = adb_conn_pool.getconn()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COALESCE(MAX(id), 0) FROM analytical_responses")
+    id_tracker['max_id'] = cursor.fetchone()[0]
+    cursor.close()
+    adb_conn_pool.putconn(conn)
     # 1. Setup and Start the Scheduler FIRST
     print("--- Starting Scheduler Application ---")
     scheduler = BackgroundScheduler()
