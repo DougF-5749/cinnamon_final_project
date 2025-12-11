@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.pool import SimpleConnectionPool
 import uvicorn
+from belonging import belonging_scores
 from escs import esc_scores
 from submissions_funcs import submission_count
 from avg_total_learning import avg_learning_hours
@@ -75,9 +76,9 @@ async def avg_learning(conn = Depends(get_adb_conn)):
 async def avg_escs(conn = Depends(get_adb_conn)):
     return esc_scores(conn)
 
-# @app.get("/endpoint-5")
-# async def endpoint_5():
-#     return endpoint_5_func(adb_conn_pool.getconn())
+@app.get("/belonging")
+async def belonging(conn = Depends(get_adb_conn)):
+    return belonging_scores(conn)
 
 # Create 4 more ednpoints here for the other metrics
 
