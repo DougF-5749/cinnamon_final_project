@@ -4,7 +4,7 @@ def esc_scores(conn):
         """
         SELECT
             country,
-            AVG(econ_soc_cul_status)
+            AVG(econ_soc_cul_status) * 3
         FROM analytical_responses
         GROUP BY country
         """
