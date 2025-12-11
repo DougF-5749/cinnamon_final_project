@@ -21,8 +21,6 @@ def avg_learning_hours(conn):
 
         dict_cnt_hrs = {"country": country, "hours": avg_total_learning}
         results_list.append(dict_cnt_hrs)
-    
-    print(f'Results list: {results_list}')
 
     return {"datasets": results_list}
 
