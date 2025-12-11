@@ -100,27 +100,32 @@ if __name__ == "__main__":
     # 1. Setup and Start the Scheduler FIRST
     print("--- Starting Scheduler Application ---")
     scheduler = BackgroundScheduler()
-    # The rest of your scheduler setup, including the initial run
-    conn = Depends(get_adb_conn)
+    
+    # Create a wrapper function that gets a real connection
+    def run_time_series_update():
+        conn = adb_conn_pool.getconn()  # Get actual connection from pool
+        conn.autocommit = True
+        try:
+            submission_time_series(conn=conn, last_maxid=id_tracker, time_series_tracker=time_series_data)
+        finally:
+            adb_conn_pool.putconn(conn)  # Return connection to pool
+    
     scheduler.add_job(
-        func=submission_time_series,
+        func=run_time_series_update,  # Use the wrapper function
         trigger='interval',
-        minutes=1, 
-        args=[conn, id_tracker, time_series_data], # You need to pass these args!
+        minutes=1,
         id='update_time_series'
     )
+    
     # Run once immediately
-    submission_time_series(conn = Depends(get_adb_conn), last_maxid=id_tracker, time_series_tracker=time_series_data)
+    run_time_series_update()
     scheduler.start()
     print("Scheduler started. Background task is running.")
     
     # 2. Start the Blocking Web Server
-    # Uvicorn's thread keeps the Python process alive, allowing the scheduler 
-    # thread to continue running in the background.
     uvicorn.run(app, port=8080)
-    # 3. Handle shutdown (Optional, but good practice if Uvicorn doesn't handle it)
-    # When uvicorn.run() returns (because the server was stopped), 
-    # this code will run.
+    
+    # 3. Handle shutdown
     print("\nWeb server stopped. Shutting down scheduler...")
     scheduler.shutdown() 
     print("Application terminated.")
