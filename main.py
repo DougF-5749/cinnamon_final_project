@@ -60,9 +60,9 @@ async def submissions(conn = Depends(get_adb_conn)):
 # async def endpoint_2():
 #     return endpoint_2_func(adb_conn_pool.getconn())
 
-# @app.get("/endpoint-3")
-# async def endpoint_3():
-#     return endpoint_3_func(adb_conn_pool.getconn())
+@app.get("/avg_learning")
+async def avg_learning(conn = Depends(get_adb_conn)):
+    return avg_learning(conn)
 
 # @app.get("/endpoint-4")
 # async def endpoint_4():

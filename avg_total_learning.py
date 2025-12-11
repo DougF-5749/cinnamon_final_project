@@ -1,23 +1,10 @@
-import psycopg2
-import configparser
-import time
-
-## FOR main.py ##
-'''
-@app.get("/avg_learning")
-async def avg_learning():
-    return avg_learning(db_state)
-'''
-
-
 def avg_learning(conn):
-    # conn = db_state['conn']
     cursor = conn.cursor()
     cursor.execute(
         """
         SELECT
             country,
-            ROUND(AVG(total_learning / 60), 0) AS avg_total_learning
+            ROUND(AVG(total_learning / 60), 0)
         FROM analytical_responses
         GROUP BY country
         """
