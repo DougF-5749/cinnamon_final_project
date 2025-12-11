@@ -3,12 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from psycopg2.pool import SimpleConnectionPool
 import uvicorn
 from belonging import belonging_scores
+from submissions_time import submission_time_series
 from subs_over_time import subs_over_time_count
 from escs import esc_scores
 from submissions_funcs import submission_count
 from avg_total_learning import avg_learning_hours
 from db_names import db_names
 import configparser
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 # function to abstract away getting a connection from the pool
 def get_adb_conn():
@@ -18,6 +21,12 @@ def get_adb_conn():
         yield conn
     finally:
         adb_conn_pool.putconn(conn)
+
+id_tracker = {
+    'max_id' : 0
+}
+time_series_data = {"datasets": [{"id": "Submissions",
+      "data": []}]}
 # -----------------------------------------------------------
 
 parser = configparser.ConfigParser()
@@ -81,7 +90,37 @@ async def avg_escs(conn = Depends(get_adb_conn)):
 async def belonging(conn = Depends(get_adb_conn)):
     return belonging_scores(conn)
 
+@app.get("/submissions_over_time")
+async def timeseries_data_submissions():
+    return time_series_data
+
 # Create 4 more ednpoints here for the other metrics
 
 if __name__ == "__main__":
+    # 1. Setup and Start the Scheduler FIRST
+    print("--- Starting Scheduler Application ---")
+    scheduler = BackgroundScheduler()
+    # The rest of your scheduler setup, including the initial run
+    conn = Depends(get_adb_conn)
+    scheduler.add_job(
+        func=submission_time_series,
+        trigger='interval',
+        minutes=1, 
+        args=[conn, id_tracker, time_series_data], # You need to pass these args!
+        id='update_time_series'
+    )
+    # Run once immediately
+    submission_time_series(conn = Depends(get_adb_conn))
+    scheduler.start()
+    print("Scheduler started. Background task is running.")
+    
+    # 2. Start the Blocking Web Server
+    # Uvicorn's thread keeps the Python process alive, allowing the scheduler 
+    # thread to continue running in the background.
     uvicorn.run(app, port=8080)
+    # 3. Handle shutdown (Optional, but good practice if Uvicorn doesn't handle it)
+    # When uvicorn.run() returns (because the server was stopped), 
+    # this code will run.
+    print("\nWeb server stopped. Shutting down scheduler...")
+    scheduler.shutdown() 
+    print("Application terminated.")
