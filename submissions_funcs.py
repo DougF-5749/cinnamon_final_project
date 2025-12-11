@@ -8,9 +8,9 @@ def submission_count(connection, db_state: dict) -> dict:
         SELECT
             COUNT(*),
             MAX(id)
-        FROM responses
+        FROM analytical_responses
         WHERE id > %s
-        """, last_max_id
+        """, (last_max_id,)
     )    
     
     row_count, max_id = cursor.fetchone()
