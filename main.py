@@ -29,7 +29,7 @@ time_series_data = {"datasets": [{"id": "Submissions",
       "data": []}]}
 
 MAX_TIME_SERIES_LENGTH = 12
-TIME_SERIES_INTERVAL_SECONDS = 15
+TIME_SERIES_INTERVAL_MINUTES = 15
 # -----------------------------------------------------------
 
 parser = configparser.ConfigParser()
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     scheduler.add_job(
         func=run_time_series_update,  # Use the wrapper function
         trigger='interval',
-        seconds=TIME_SERIES_INTERVAL_SECONDS,
+        seconds=TIME_SERIES_INTERVAL_MINUTES,
         id='update_time_series'
     )
     
