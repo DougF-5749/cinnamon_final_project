@@ -26,4 +26,3 @@ def submission_count(connection, db_state: dict) -> dict:
 
     return {"count": db_state['total_submissions']}
 
-
